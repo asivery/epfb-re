@@ -8,6 +8,9 @@
 #define EPFR_SIZE 0x110
 #define EPFR_OFFSET_MAINBUFFER 0xc8
 #define EPFR_OFFSET_AUXBUFFER 0xa8
+#define EPFR_SIZE_RM2 0x88
+#define EPFR_OFFSET_MAINBUFFER_RM2 0x70
+#define EPFR_OFFSET_AUXBUFFER_RM2 0x60
 
 enum EPScreenMode {
     QualityFastest = 0,
@@ -55,6 +58,21 @@ public:
     QImage mainBuffer;
 private:
     char OPAQUE_C[EPFR_SIZE - EPFR_OFFSET_MAINBUFFER - sizeof(QImage)];
+};
+
+class EPFramebufferFusion : public EPFramebufferSwtcon {
+public:
+    EPFramebufferFusion();
+private:
+    char OPAQUE_A[EPFR_OFFSET_AUXBUFFER_RM2];
+public:
+    QImage auxBuffer;
+private:
+    char OPAQUE_B[EPFR_OFFSET_MAINBUFFER_RM2 - sizeof(QImage) - EPFR_OFFSET_AUXBUFFER_RM2];
+public:
+    QImage mainBuffer;
+private:
+    char OPAQUE_C[EPFR_SIZE_RM2 - EPFR_OFFSET_MAINBUFFER_RM2 - sizeof(QImage)];
 };
 
 class EPFramebufferAcep2 *EPFramebuffer::nqtInstance() {
