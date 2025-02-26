@@ -12,6 +12,13 @@
 #define EPFR_OFFSET_MAINBUFFER_RM2 0x70
 #define EPFR_OFFSET_AUXBUFFER_RM2 0x60
 
+#ifdef __aarch64__
+#define DEFAULT_EPFR_CLASS EPFramebufferAcep2
+#else
+#define DEFAULT_EPFR_CLASS EPFramebufferFusion
+#endif
+#define EPFR_ALLOCATE_NEW (new DEFAULT_EPFR_CLASS())
+
 enum EPScreenMode {
     QualityFastest = 0,
     QualityFast = 1,
@@ -33,8 +40,7 @@ public:
     };
     void setBuffers(std::tuple<QImage, QImage>, QImage *old=nullptr);
     unsigned long swapBuffers(QRect param_1, EPContentType epct, EPScreenMode type, QFlags<EPFramebuffer::UpdateFlag> flags);
-    static class EPFramebufferAcep2 *instance();
-    static inline class EPFramebufferAcep2 *nqtInstance();
+    static class DEFAULT_EPFR_CLASS *instance();
 };
 
 class EPFramebufferSwtcon : public EPFramebuffer{
@@ -44,6 +50,7 @@ public:
     // unsigned long update(QRect param_1, int color, PixelMode type, int fullRefresh);
 };
 
+#ifdef __aarch64__
 class EPFramebufferAcep2 : public EPFramebufferSwtcon {
 public:
     EPFramebufferAcep2();
@@ -59,7 +66,9 @@ public:
 private:
     char OPAQUE_C[EPFR_SIZE - EPFR_OFFSET_MAINBUFFER - sizeof(QImage)];
 };
+#endif
 
+#ifdef __arm__
 class EPFramebufferFusion : public EPFramebufferSwtcon {
 public:
     EPFramebufferFusion();
@@ -74,11 +83,4 @@ public:
 private:
     char OPAQUE_C[EPFR_SIZE_RM2 - EPFR_OFFSET_MAINBUFFER_RM2 - sizeof(QImage)];
 };
-
-class EPFramebufferAcep2 *EPFramebuffer::nqtInstance() {
-    static EPFramebufferAcep2 *fb = nullptr;
-    if(fb == nullptr) {
-        fb = new EPFramebufferAcep2();
-    }
-    return fb;
-}
+#endif

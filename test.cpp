@@ -6,7 +6,7 @@
 #include <iostream>
 
 int main(int argc, char **argv){
-    EPFramebufferAcep2 *framebuffer = EPFramebuffer::nqtInstance();
+    DEFAULT_EPFR_CLASS *framebuffer = EPFR_ALLOCATE_NEW;
     QImage artwork("/tmp/art.png");
     QPainter dest(&framebuffer->auxBuffer);
     dest.drawImage(0, 0, artwork);
