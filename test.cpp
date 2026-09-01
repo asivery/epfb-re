@@ -11,7 +11,7 @@ void run(){
     QImage artwork("/tmp/art.png");
     QPainter dest(framebuffer->getAuxFramebuffer());
     dest.drawImage(0, 0, artwork);
-    framebuffer->swapBuffers(QRect(0, 0, artwork.width(), artwork.height()), Color, QualityFastest, EPFramebuffer::UpdateFlag::CompleteRefresh);
+    framebuffer->swapBuffers(QRect(0, 0, artwork.width(), artwork.height()), EPScreenMode::QualityFastest, EPFramebuffer::UpdateFlag::CompleteRefresh);
     std::cout << "Buffers swapped" << std::endl;
 }
 

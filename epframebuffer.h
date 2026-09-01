@@ -4,7 +4,15 @@
 #include <QFlags>
 
 
-enum EPScreenMode {
+enum class EPScreenMode {
+    QualityFastest = 0,
+    QualityFast = 1,
+    Quality3 = 3,
+    QualityFull = 4,
+    Quality5 = 5,
+};
+
+enum class PixelMode {
     QualityFastest = 0,
     QualityFast = 1,
     Quality3 = 3,
@@ -23,7 +31,7 @@ public:
         NoRefresh = 0,
         CompleteRefresh = 1,
     };
-    unsigned long swapBuffers(QRect param_1, EPContentType epct, EPScreenMode type, QFlags<EPFramebuffer::UpdateFlag> flags);
+    unsigned long swapBuffers(QRect param_1, EPScreenMode type, QFlags<EPFramebuffer::UpdateFlag> flags);
     #ifdef EPFB_INTERNAL
     static EPFramebuffer *instance();
     #endif
