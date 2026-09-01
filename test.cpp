@@ -11,7 +11,18 @@ void run(){
     QImage artwork("/tmp/art.png");
     QPainter dest(framebuffer->getAuxFramebuffer());
     dest.drawImage(0, 0, artwork);
-    framebuffer->swapBuffers(QRect(0, 0, artwork.width(), artwork.height()), EPScreenMode::QualityFastest, EPFramebuffer::UpdateFlag::CompleteRefresh);
+
+    // OLD Api:
+    framebuffer->swapBuffers(QRect(0, 0, artwork.width(), artwork.height()), EPScreenMode::Sleep, EPFramebuffer::UpdateFlag::CompleteRefresh);
+
+    // NEW Api:
+    // EPScreenModeMap *map = EPScreenModeMap::createAsInXochitl();
+    // map->dump();
+    // map->setModeForRegion(QRegion(0, 0, 100, artwork.height()), EPScreenMode::Sleep);
+    // map->dump();
+    // framebuffer->swapBuffers(QRegion(0, 0, 100, artwork.height()), *map, EPFramebuffer::UpdateFlag::NoFullRefresh);
+    // delete map;
+
     std::cout << "Buffers swapped" << std::endl;
 }
 

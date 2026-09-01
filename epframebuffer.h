@@ -2,36 +2,45 @@
 #include <QImage>
 #include <QRect>
 #include <QFlags>
+#include <vector>
 
 
 enum class EPScreenMode {
-    QualityFastest = 0,
-    QualityFast = 1,
-    Quality3 = 3,
-    QualityFull = 4,
-    Quality5 = 5,
+    Pen = 0,
+    Mono = 1,
+    Animation = 2,
+    UI = 3,
+    Content = 4,
+    Sleep = 5,
 };
 
-enum class PixelMode {
-    QualityFastest = 0,
-    QualityFast = 1,
-    Quality3 = 3,
-    QualityFull = 4,
-    Quality5 = 5,
+class EPScreenModeMap {
+    struct Translation{}; // what's that?
+public:
+    QRegion modeRegions[6];
+    char OPAQUE[0x58 - sizeof(QRegion) * 6];
+    EPScreenModeMap(QSize size, std::vector<EPScreenModeMap::Translation> &&pval);
+    void setModeForRegion(const QRegion &reg, EPScreenMode mode);
+    bool isOnly(int mode) const;
+    void dump() const;
+
+
+    static inline EPScreenModeMap *createAsInXochitl() { 
+        return new EPScreenModeMap(QSize(-1, -1), std::vector<Translation>());
+    }
 };
 
-enum EPContentType {
-    Mono = 0,
-    Color = 1,
-};
+
+static_assert(sizeof(struct EPScreenModeMap) == 0x58, "Wrong size");
 
 class EPFramebuffer {
 public:
     enum UpdateFlag {
-        NoRefresh = 0,
+        NoFullRefresh = 0,
         CompleteRefresh = 1,
     };
-    unsigned long swapBuffers(QRect param_1, EPScreenMode type, QFlags<EPFramebuffer::UpdateFlag> flags);
+    unsigned long swapBuffers(QRect rect, EPScreenMode type, QFlags<EPFramebuffer::UpdateFlag> flags);
+    unsigned long swapBuffers(const QRegion &region, const EPScreenModeMap &mode, QFlags<EPFramebuffer::UpdateFlag> flags);
     #ifdef EPFB_INTERNAL
     static EPFramebuffer *instance();
     #endif
@@ -41,5 +50,3 @@ public:
     QImage *getAuxFramebuffer();
     QImage *getMainFramebuffer();
 };
-
-EPFramebuffer *createEPFramebuffer();
